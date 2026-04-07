@@ -5,10 +5,14 @@ import (
 	"sync/atomic"
 )
 
-type Counter struct {
-	count atomic.Uint64
+type MemoryGenerator struct {
+	counter atomic.Uint64
 }
 
-func (c *Counter) Next(ctx context.Context) (uint64, error) {
-	return uint64(c.count.Add(1)), nil
+func NewMemoryGenerator() *MemoryGenerator {
+	return &MemoryGenerator{}
+}
+
+func (g *MemoryGenerator) Next(ctx context.Context) (uint64, error) {
+	return g.counter.Add(1), nil
 }

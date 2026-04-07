@@ -1,15 +1,41 @@
 package service
 
-import "shortener/internal/repository"
+import (
+	"context"
+	"shortener/internal/codec"
+	"shortener/internal/generator"
+	"shortener/internal/repository"
+)
 
 type Service struct {
-	repo repository.Repository
+	repo      repository.Repository
+	generator generator.Generator
 }
 
-const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_"
-
-func NewService(repo repository.Repository) *Service {
+func NewService(repo repository.Repository, generator generator.Generator) *Service {
 	return &Service{
-		repo: repo,
+		repo:      repo,
+		generator: generator,
 	}
+}
+
+func (s *Service) Shorten(ctx context.Context, longUrl string) (string, error) {
+	existing, err := s.repo.GetShort(ctx, longUrl)
+	if err == nil {
+		return existing, nil
+	}
+
+	id, err := s.generator.Next(ctx)
+	if err != nil {
+		return "", err
+	}
+
+	shortUrl := codec.Encode(id)
+
+	if err := s.repo.Save(ctx, shortUrl, longUrl); err != nil {
+		return "", err
+	}
+
+	return shortUrl, nil
+
 }

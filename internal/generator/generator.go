@@ -2,6 +2,6 @@ package generator
 
 import "context"
 
-type IDGenerator interface {
+type Generator interface {
 	Next(ctx context.Context) (uint64, error)
 }
