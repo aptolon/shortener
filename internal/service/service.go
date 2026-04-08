@@ -24,7 +24,18 @@ func NewService(repo repository.Repository, generator generator.Generator) *Serv
 	}
 }
 
+func normalizeURL(url string) string {
+	url = strings.ToLower(url)
+	url = strings.TrimSpace(url)
+	url = strings.TrimPrefix(url, "https://")
+	url = strings.TrimPrefix(url, "http://")
+	url = strings.TrimRight(url, "/")
+	return url
+}
+
 func (s *Service) Shorten(ctx context.Context, longUrl string) (string, error) {
+	longUrl = normalizeURL(longUrl)
+
 	existing, err := s.repo.GetShort(ctx, longUrl)
 	if err == nil {
 		return existing, nil
@@ -57,9 +68,7 @@ func (s *Service) GetOriginal(ctx context.Context, shortUrl string) (string, err
 	if err != nil {
 		return "", err
 	}
-	if !strings.HasPrefix(longUrl, "http://") && !strings.HasPrefix(longUrl, "https://") {
-		longUrl = "https://" + longUrl
-	}
+	longUrl = "https://" + longUrl
 
 	return longUrl, nil
 }
