@@ -16,7 +16,3 @@ func Encode(id uint64) string {
 
 	return string(buf)
 }
-
-func Decode(code string) (uint64, error) {
-	return 0, nil
-}

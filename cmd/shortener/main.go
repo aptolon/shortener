@@ -1,18 +1,28 @@
 package main
 
 import (
-	"context"
-	"fmt"
-	"shortener/internal/codec"
+	"log"
+	"net/http"
 	"shortener/internal/generator"
+	"shortener/internal/handlers"
+	"shortener/internal/repository"
+	"shortener/internal/service"
+
+	"github.com/gorilla/mux"
 )
 
 func main() {
+	repo := repository.NewMemoryRepository()
 	gen := generator.NewMemoryGenerator()
-	ctx := context.Background()
-	for range 100 {
-		i, _ := gen.Next(ctx)
-		fmt.Println(codec.Encode(uint64(i)))
-	}
 
+	srv := service.NewService(repo, gen)
+
+	h := handlers.NewHandlers(srv)
+	r := mux.NewRouter()
+
+	r.HandleFunc("/shorten", h.Shorten).Methods(http.MethodPost)
+	r.HandleFunc("/{short}", h.Redirect).Methods(http.MethodGet)
+
+	log.Println("server started on :8080")
+	log.Fatal(http.ListenAndServe(":8080", r))
 }

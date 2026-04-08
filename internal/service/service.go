@@ -2,10 +2,15 @@ package service
 
 import (
 	"context"
+	"errors"
 	"shortener/internal/codec"
+	"shortener/internal/errs"
 	"shortener/internal/generator"
 	"shortener/internal/repository"
+	"strings"
 )
+
+const maxRetries = 10
 
 type Service struct {
 	repo      repository.Repository
@@ -25,17 +30,36 @@ func (s *Service) Shorten(ctx context.Context, longUrl string) (string, error) {
 		return existing, nil
 	}
 
-	id, err := s.generator.Next(ctx)
+	for range maxRetries {
+		id, err := s.generator.Next(ctx)
+		if err != nil {
+			return "", err
+		}
+
+		shortUrl := codec.Encode(id)
+
+		err = s.repo.Save(ctx, shortUrl, longUrl)
+		if err == nil {
+			return shortUrl, nil
+		}
+
+		if !errors.Is(err, errs.ErrShortLinkAlreadyExists) {
+			return "", err
+		}
+	}
+
+	return "", errs.ErrMaxRetriesExceeded
+}
+
+func (s *Service) GetOriginal(ctx context.Context, shortUrl string) (string, error) {
+
+	longUrl, err := s.repo.GetLong(ctx, shortUrl)
 	if err != nil {
 		return "", err
 	}
-
-	shortUrl := codec.Encode(id)
-
-	if err := s.repo.Save(ctx, shortUrl, longUrl); err != nil {
-		return "", err
+	if !strings.HasPrefix(longUrl, "http://") && !strings.HasPrefix(longUrl, "https://") {
+		longUrl = "https://" + longUrl
 	}
 
-	return shortUrl, nil
-
+	return longUrl, nil
 }

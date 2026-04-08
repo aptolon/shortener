@@ -3,6 +3,8 @@ package repository
 import (
 	"context"
 	"sync"
+
+	"shortener/internal/errs"
 )
 
 type MemoryRepository struct {
@@ -22,10 +24,10 @@ func (r *MemoryRepository) Save(ctx context.Context, shortUrl string, longUrl st
 	r.mu.Lock()
 	defer r.mu.Unlock()
 	if _, ok := r.shortToLong[shortUrl]; ok {
-		return ErrShortLinkAlreadyExists
+		return errs.ErrShortLinkAlreadyExists
 	}
 	if _, ok := r.longToShort[longUrl]; ok {
-		return ErrLongLinkAlreadyExists
+		return errs.ErrLongLinkAlreadyExists
 	}
 	r.shortToLong[shortUrl] = longUrl
 	r.longToShort[longUrl] = shortUrl
@@ -39,13 +41,14 @@ func (r *MemoryRepository) GetLong(ctx context.Context, shortUrl string) (string
 	if longUrl, ok := r.shortToLong[shortUrl]; ok {
 		return longUrl, nil
 	}
-	return "", ErrNotFound
+	return "", errs.ErrNotFound
 }
+
 func (r *MemoryRepository) GetShort(ctx context.Context, longUrl string) (string, error) {
 	r.mu.RLock()
 	defer r.mu.RUnlock()
 	if shortUrl, ok := r.longToShort[longUrl]; ok {
 		return shortUrl, nil
 	}
-	return "", ErrNotFound
+	return "", errs.ErrNotFound
 }
