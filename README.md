@@ -36,33 +36,33 @@ HTTP-сервис на Go для создания и получения сокр
   * поиск в обе стороны: `short -> long`, `long -> short`
   * потокобезопасность через `sync.RWMutex` для in-memory и `pgx.Pool` для postrges
   
-  * **generator**
+* **generator**
 
   * интерфейс `Generator`
   * `MemoryGenerator` на `atomic.Uint64`
   * `PostgresGenerator` на sequence `short_url_seq`
   
-  * **codec**
+* **codec**
 
   * кодирование `uint64 -> string`
   * fixed length = `10`
   * base-63 alphabet
   
-  * **service**
+* **service**
 
   * нормализация URL
   * возврат существующего short URL для уже сохранённого original URL
   * retry логика генерации short url
   * получение original URL
   
-  * **handlers**
+* **handlers**
 
   * `POST /shorten`
   * `GET /{short}`
   * JSON request/response
   * redirect через `302 Found`
   
-  * **app**
+* **app**
 
   * выбор storage по `STORAGE`
   
