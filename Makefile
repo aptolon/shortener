@@ -4,14 +4,10 @@ export
 
 CMD_DIR=./cmd/shortener
 
-.PHONY: run test test-race migrate-up migrate-down docker-build docker-up docker-down clean
+.PHONY: run test test-race migrate-up migrate-down test-db-up test-db-down test-integration docker-build docker-up docker-down
 
-build:
-	@go build -o $(BIN_PATH) $(CMD_PATH)
 run:
 	@go run $(CMD_DIR)
-clean:
-	rm -rf ./bin
 
 test:
 	@go test ./...
