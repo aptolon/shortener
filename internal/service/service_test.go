@@ -31,6 +31,7 @@ func TestService_Shorten_ReturnsExisting(t *testing.T) {
 }
 
 func TestService_NormalizeURL(t *testing.T) {
+
 	repo := repository.NewMemoryRepository()
 	gen := generator.NewMemoryGenerator()
 	svc := NewService(repo, gen)
