@@ -1,0 +1,17 @@
+version: "3.9"
+
+services:
+  postgres-test:
+    image: postgres:18-bookworm
+    container_name: shortener-postgres-test
+    environment:
+      POSTGRES_DB: shortener_test
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5434:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d shortener_test"]
+      interval: 3s
+      timeout: 3s
+      retries: 10
