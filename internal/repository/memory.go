@@ -20,7 +20,7 @@ func NewMemoryRepository() *MemoryRepository {
 	}
 }
 
-func (r *MemoryRepository) Save(ctx context.Context, shortUrl string, longUrl string) error {
+func (r *MemoryRepository) Save(ctx context.Context, id uint64, shortUrl string, longUrl string) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 	if _, ok := r.shortToLong[shortUrl]; ok {

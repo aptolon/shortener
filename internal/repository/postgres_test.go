@@ -26,7 +26,9 @@ func TestPostgresRepository_SaveAndGet(t *testing.T) {
 	short := "1234567890"
 	long := "https://finance.ozon.ru"
 
-	if err := repo.Save(ctx, short, long); err != nil {
+	id := uint64(1)
+
+	if err := repo.Save(ctx, id, short, long); err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
 

@@ -49,7 +49,7 @@ func (s *Service) Shorten(ctx context.Context, longUrl string) (string, error) {
 
 		shortUrl := codec.Encode(id)
 
-		err = s.repo.Save(ctx, shortUrl, longUrl)
+		err = s.repo.Save(ctx, id, shortUrl, longUrl)
 		if err == nil {
 			return shortUrl, nil
 		}

@@ -17,13 +17,13 @@ func NewPostgresRepository(db *pgxpool.Pool) *PostgresRepository {
 	}
 }
 
-func (r *PostgresRepository) Save(ctx context.Context, shortUrl string, longUrl string) error {
+func (r *PostgresRepository) Save(ctx context.Context, id uint64, shortUrl string, longUrl string) error {
 	query := `
-		INSERT INTO links (short_code, long_url)
-		VALUES ($1, $2)
+		INSERT INTO links (id, short_code, long_url)
+		VALUES ($1, $2, $3)
 	`
 
-	_, err := r.db.Exec(ctx, query, shortUrl, longUrl)
+	_, err := r.db.Exec(ctx, query, id, shortUrl, longUrl)
 	if err != nil {
 		return errs.ErrShortLinkAlreadyExists
 	}

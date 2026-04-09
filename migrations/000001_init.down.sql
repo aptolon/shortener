@@ -1,1 +1,3 @@
-DROP TABLE links;
+DROP TABLE IF EXISTS links;
+
+DROP SEQUENCE IF EXISTS short_url_seq;

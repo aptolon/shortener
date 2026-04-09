@@ -19,7 +19,7 @@ func NewPostgresGenerator(db *pgxpool.Pool) *PostgresGenerator {
 func (g *PostgresGenerator) Next(ctx context.Context) (uint64, error) {
 	var id uint64
 
-	err := g.db.QueryRow(ctx, `SELECT nextval('links_id_seq')`).Scan(&id)
+	err := g.db.QueryRow(ctx, `SELECT nextval('short_url_seq')`).Scan(&id)
 	if err != nil {
 		return 0, err
 	}
