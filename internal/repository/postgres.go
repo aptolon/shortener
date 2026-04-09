@@ -19,7 +19,7 @@ func NewPostgresRepository(db *pgxpool.Pool) *PostgresRepository {
 
 func (r *PostgresRepository) Save(ctx context.Context, id uint64, shortUrl string, longUrl string) error {
 	query := `
-		INSERT INTO links (id, short_code, long_url)
+		INSERT INTO links (id, short_url, long_url)
 		VALUES ($1, $2, $3)
 	`
 
@@ -32,7 +32,7 @@ func (r *PostgresRepository) Save(ctx context.Context, id uint64, shortUrl strin
 
 func (r *PostgresRepository) GetLong(ctx context.Context, shortUrl string) (string, error) {
 	query := `
-		SELECT long_url FROM links WHERE short_code = $1
+		SELECT long_url FROM links WHERE short_url = $1
 	`
 
 	var longUrl string
@@ -45,7 +45,7 @@ func (r *PostgresRepository) GetLong(ctx context.Context, shortUrl string) (stri
 
 func (r *PostgresRepository) GetShort(ctx context.Context, longUrl string) (string, error) {
 	query := `
-		SELECT short_code FROM links WHERE long_url = $1
+		SELECT short_url FROM links WHERE long_url = $1
 	`
 
 	var shortUrl string
